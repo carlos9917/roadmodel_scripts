@@ -115,4 +115,31 @@ import Statistics
      #d = Wv*sqrt( sum( (fcst - obs).^2) )/stdev
      return distances,analogs
     end
+
+    function read_all_obs(data_path)
+
+       files = readdir(data_path, join=false)
+       print("files ",files)
+        glatdump_files = [x for x in files if startswith(x, "dump")]
+        df_list = []
+        for f in glatdump_files
+          println("Reading ",f)
+          qs = "SELECT ID, TIME, DATETIME,MEAS FROM glatdump"
+          dbase = joinpath(data_path,f)
+          df = read_sqlite(dbase,
+                printQuery=true,
+                use_custom_query_string=true,
+                custom_query_string=qs)
+           println(names(df))
+           println(first(df))
+           println("paso 1")
+           append!(df_list,[df])
+           #innerjoin(df_obs, df, on = :ID)
+        end
+        df_obs = reduce(vcat, df_list)
+        return df_obs
+    end
+
 end # module
+
+
