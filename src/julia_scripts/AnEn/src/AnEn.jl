@@ -119,8 +119,9 @@ import Statistics
     function read_all_obs(data_path)
 
        files = readdir(data_path, join=false)
+       bufr_code="12201"
        print("files ",files)
-        glatdump_files = [x for x in files if startswith(x, "dump")]
+        glatdump_files = [x for x in files if startswith(x, string("dump","_",bufr_code))]
         df_list = []
         for f in glatdump_files
           println("Reading ",f)
