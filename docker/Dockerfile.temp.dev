@@ -24,7 +24,7 @@ RUN mkdir -p /var/log/cron && touch /var/log/cron/cron.log
 USER grassuser
 WORKDIR /home/grassuser
 RUN mkdir gis
-RUN git clone https://carlos9917/roadmodel_scripts.git
+RUN git clone https://github.com/carlos9917/roadmodel_scripts.git
 #make prompt a short one. Add my favourite alias
 RUN export PS1="\u > "export PS1="\u $ "
 RUN echo "alias dirt='ls -alrt'" >> /home/grassuser/.bashrc
@@ -32,7 +32,7 @@ RUN mkdir /home/grassuser/gis/grassdata/
 RUN cp -r /home/grassuser/roadmodel_scripts/config_files/RoadStations /home/grassuser/gis/grassdata/
 #RUN mkdir /home/grassuser/gis/grassdata/mytemploc_dk
 RUN mkdir /home/grassuser/gis/test
-RUN cp /home/grassuser/roadmodel_scripts/test_scripts/* /home/grassuser/gis/test
+RUN cp /home/grassuser/roadmodel_scripts/src/test_scripts/* /home/grassuser/gis/test
 RUN cp /home/grassuser/roadmodel_scripts/data_website/*.py /home/grassuser/gis/test
 RUN cp /home/grassuser/roadmodel_scripts/data_website/*.sh /home/grassuser/gis/test
 RUN mkdir /home/grassuser/.grass7/
