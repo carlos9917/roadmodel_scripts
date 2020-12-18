@@ -1,0 +1,51 @@
+FROM mundialis/grass-py3-pdal
+
+ARG PID
+ARG GID
+
+#set user Id and group Id
+ENV PID=$PID
+ENV GID=$GID
+
+RUN groupadd -g $GID grassuser
+RUN useradd -u $PID -g $GID -d /home/grassuser/ -m -s /bin/bash grassuser && echo "grassuser:grassuser" | chpasswd && adduser grassuser sudo
+
+#COPY src/* /home/harpuser/
+RUN apt-get update
+RUN apt-get install -y openssh-server
+RUN apt-get install -y openssh-client
+RUN apt-get install -y cron postgresql-client
+RUN apt-get install -y sudo
+#RUN chmod 0644 /etc/cron.d/cjob
+RUN pip3 install pandas
+RUN pip3 install pyproj
+RUN chown -R grassuser:grassuser /home/grassuser/
+RUN mkdir -p /var/log/cron && touch /var/log/cron/cron.log
+USER grassuser
+WORKDIR /home/grassuser
+RUN mkdir gis
+RUN git clone https://carlos9917/roadmodel_scripts.git
+#make prompt a short one. Add my favourite alias
+RUN export PS1="\u > "export PS1="\u $ "
+RUN echo "alias dirt='ls -alrt'" >> /home/grassuser/.bashrc
+RUN mkdir /home/grassuser/gis/grassdata/
+RUN cp -r /home/grassuser/roadmodel_scripts/config_files/RoadStations /home/grassuser/gis/grassdata/
+#RUN mkdir /home/grassuser/gis/grassdata/mytemploc_dk
+RUN mkdir /home/grassuser/gis/test
+RUN cp /home/grassuser/roadmodel_scripts/test_scripts/* /home/grassuser/gis/test
+RUN cp /home/grassuser/roadmodel_scripts/data_website/*.py /home/grassuser/gis/test
+RUN cp /home/grassuser/roadmodel_scripts/data_website/*.sh /home/grassuser/gis/test
+RUN mkdir /home/grassuser/.grass7/
+RUN cp /home/grassuser/roadmodel_scripts/config_files/rc_files/rc* /home/grassuser/.grass7/
+WORKDIR /home/grassuser/roadmodel_scripts
+RUN git config --global user.email "carlos9917@gmail.com"
+RUN git config --global user.name "Carlos Peralta"
+WORKDIR /home/grassuser/
+COPY crontab /etc/crontabs/grassuser
+#RUN chown -R grassuser:grassuser /etc/crontabs/grassuser
+COPY run-crond.sh .
+#Start cron in the foreground
+#ENTRYPOINT ["cron","-f"]
+#CMD ["./run-crond.sh"]
+#CMD ["bash","test_data.sh"]
+#, "main.R"]

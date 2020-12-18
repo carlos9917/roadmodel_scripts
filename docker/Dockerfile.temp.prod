@@ -1,0 +1,38 @@
+FROM mundialis/grass-py3-pdal
+
+RUN apt-get update
+RUN apt-get install -y openssh-server
+RUN apt-get install -y openssh-client
+RUN apt-get install -y cron
+RUN apt-get install -y mailutils
+RUN pip3 install pandas
+RUN pip3 install pyproj
+RUN mkdir -p /var/log/cron && touch /var/log/cron/cron.log
+#fix the issue with the ttyname failed message
+RUN sed -i "s:mesg n || true::g" /root/.profile
+RUN echo "tty -s && mesg n" >> .profile
+RUN mkdir /root/gis
+WORKDIR /root/gis
+RUN git clone https://carlos9917/roadmodel_scripts.git
+#make prompt a short one. Add my favourite alias
+RUN export PS1="\u > "export PS1="\u $ "
+RUN echo "alias dirt='ls -alrt'" >> /root/.bashrc
+RUN mkdir /root/gis/grassdata/
+RUN cp -r /root/gis/roadmodel_scripts/config_files/RoadStations /root/gis/grassdata/
+RUN mkdir /root/gis/process_data
+RUN cp /root/gis/roadmodel_scripts/test_scripts/* /root/gis/process_data
+RUN cp /root/gis/roadmodel_scripts/data_website/*.py /root/gis/process_data
+RUN cp /root/gis/roadmodel_scripts/data_website/*.sh /root/gis/process_data
+RUN cp /root/gis/roadmodel_scripts/config_files/rc_files/rc* /root/.grass7/
+WORKDIR /root/gis/roadmodel_scripts
+RUN git config --global user.email "carlos9917@gmail.com"
+RUN git config --global user.name "Carlos Peralta"
+WORKDIR /root/gis
+COPY crontab /etc/crontabs/root
+COPY crontab /etc/cron.d/crontab-daily
+RUN chmod 755 /etc/cron.d/crontab-daily
+RUN crontab /etc/cron.d/crontab-daily
+RUN touch /var/log/cron.log
+COPY run-crond.sh .
+#Start cron in the foreground
+#ENTRYPOINT ["cron","-f"]

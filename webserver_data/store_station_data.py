@@ -1,0 +1,35 @@
+#Read the data collected by get_data.sh, add to sql file
+import sqlite3
+import pandas as pd
+import sys
+import os
+
+def create_dbase_stations(ifile):
+    sql_file="station_list.sqlite"
+    data=pd.read_csv(ifile,header=None,index_col=False)
+    data.columns=['station','station_name','lon','lat']
+    con = sqlite3.connect(sql_file)
+    data.to_sql('station_list',con,if_exists="append", index=False)
+    con.close()
+
+def update_dbase_stations(ifile):
+    sql_file="station_list.sqlite"
+    conn=sqlite3.connect(sql_file)
+    sql_command = "SELECT * FROM station_list"
+    data_old=pd.read_sql(sql_command, conn)
+    data_new=pd.read_csv(ifile,header=None,index_col=False)
+    data_new.columns=['station','station_name','lon','lat']
+    data_new.to_sql('station_list',conn,if_exists="replace", index=False)
+
+if __name__=="__main__":
+    if len(sys.argv) == 1:
+        print("Please provide name of the csv file")
+        sys.exit()
+    else:
+        ifile=sys.argv[1]
+        if not os.path.isfile("./station_list.sqlite"):
+            print("Creating database")
+            create_dbase_stations(ifile)
+        else:
+            print("Updating database")
+            update_dbase_stations(ifile)
