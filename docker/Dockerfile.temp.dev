@@ -33,17 +33,17 @@ RUN cp -r /home/grassuser/roadmodel_scripts/config_files/RoadStations /home/gras
 #RUN mkdir /home/grassuser/gis/grassdata/mytemploc_dk
 RUN mkdir /home/grassuser/gis/test
 RUN cp /home/grassuser/roadmodel_scripts/src/test_scripts/* /home/grassuser/gis/test
-RUN cp /home/grassuser/roadmodel_scripts/data_website/*.py /home/grassuser/gis/test
-RUN cp /home/grassuser/roadmodel_scripts/data_website/*.sh /home/grassuser/gis/test
+RUN cp /home/grassuser/roadmodel_scripts/webserver_data/*.py /home/grassuser/gis/test
+RUN cp /home/grassuser/roadmodel_scripts/webserver_data/*.sh /home/grassuser/gis/test
 RUN mkdir /home/grassuser/.grass7/
 RUN cp /home/grassuser/roadmodel_scripts/config_files/rc_files/rc* /home/grassuser/.grass7/
 WORKDIR /home/grassuser/roadmodel_scripts
 RUN git config --global user.email "carlos9917@gmail.com"
 RUN git config --global user.name "Carlos Peralta"
 WORKDIR /home/grassuser/
-COPY crontab /etc/crontabs/grassuser
+#COPY crontab /etc/crontabs/grassuser
 #RUN chown -R grassuser:grassuser /etc/crontabs/grassuser
-COPY run-crond.sh .
+#COPY run-crond.sh .
 #Start cron in the foreground
 #ENTRYPOINT ["cron","-f"]
 #CMD ["./run-crond.sh"]
