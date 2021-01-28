@@ -21,18 +21,18 @@ RUN mkdir /root/gis/grassdata/
 RUN cp -r /root/gis/roadmodel_scripts/config_files/RoadStations /root/gis/grassdata/
 RUN mkdir /root/gis/process_data
 RUN cp /root/gis/roadmodel_scripts/src/test_scripts/* /root/gis/process_data
-RUN cp /root/gis/roadmodel_scripts/data_website/*.py /root/gis/process_data
-RUN cp /root/gis/roadmodel_scripts/data_website/*.sh /root/gis/process_data
+RUN cp /root/gis/roadmodel_scripts/webserver_data/*.py /root/gis/process_data
+RUN cp /root/gis/roadmodel_scripts/webserver_data/*.sh /root/gis/process_data
 RUN cp /root/gis/roadmodel_scripts/config_files/rc_files/rc* /root/.grass7/
 WORKDIR /root/gis/roadmodel_scripts
 RUN git config --global user.email "carlos9917@gmail.com"
 RUN git config --global user.name "Carlos Peralta"
 WORKDIR /root/gis
-COPY crontab /etc/crontabs/root
-COPY crontab /etc/cron.d/crontab-daily
-RUN chmod 755 /etc/cron.d/crontab-daily
-RUN crontab /etc/cron.d/crontab-daily
-RUN touch /var/log/cron.log
-COPY run-crond.sh .
+#COPY crontab /etc/crontabs/root
+#COPY crontab /etc/cron.d/crontab-daily
+#RUN chmod 755 /etc/cron.d/crontab-daily
+#RUN crontab /etc/cron.d/crontab-daily
+#RUN touch /var/log/cron.log
+#COPY run-crond.sh .
 #Start cron in the foreground
 #ENTRYPOINT ["cron","-f"]
