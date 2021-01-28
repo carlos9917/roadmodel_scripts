@@ -117,6 +117,9 @@ import Statistics
     end
 
     function read_all_obs(data_path)
+       """
+       Note: this can produce high data frames
+       """
 
        files = readdir(data_path, join=false)
        bufr_code="12201"
@@ -139,6 +142,21 @@ import Statistics
         end
         df_obs = reduce(vcat, df_list)
         return df_obs
+    end
+
+    function read_all_fcst(data_path)
+       files = readdir(data_path, join=false)
+        glatdump_files = [x for x in files if startswith(x, "dump")]
+        qs = "SELECT ID, TIME, DATETIME,MEAS FROM glatdump"
+        df_list = []
+    end
+
+    function loop_obs(data_path)
+      """
+      This function loops through all necessary sql files
+      and only loads the necessary months.
+
+      """
     end
 
 end # module
